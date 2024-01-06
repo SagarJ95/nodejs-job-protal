@@ -1,3 +1,7 @@
+//API Documentation
+const swaggerUI = require("swagger-ui-express");
+const swaggerDoc = require("swagger-jsdoc");
+
 const express = require("express");
 const app = express();
 const testroute = require("./routes/testroute");
@@ -22,6 +26,25 @@ require("express-async-errors");
 //Database Connect
 ConnectDB();
 
+//swagger api config / options
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Job Portal Nodejs",
+      version: "1.0.0",
+      description: "",
+    },
+    servers: [{ url: "http://localhost:8080" }],
+  },
+  apis: ["./routes/*.js"],
+};
+
+const spec = swaggerDoc(options);
+
+//route for swagger open
+app.use("/api-doc", swaggerUI.serve, swaggerUI.setup(spec));
+
 //middleware
 app.use(cors());
 app.use(helmet()); // secure header section
@@ -38,4 +61,4 @@ app.use("/api/v4/job", jobData);
 //validation
 app.use(errorMiddleware);
 
-app.listen(8001);
+app.listen(process.env.PORT);
